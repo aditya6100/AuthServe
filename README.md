@@ -1,212 +1,117 @@
-# AuthServe: Role-Based Authentication API
+# AuthServe: A Robust Node.js Authentication and Authorization API
 
-A robust backend server for handling user authentication and management, featuring role-based access control (RBAC). Built with Node.js, Express, and MongoDB, this project provides a secure and scalable foundation for any application requiring user management. This is an intermediate-level project, perfect for portfolio use.
-
----
-
-### Badges
-
-![Project Status](https://img.shields.io/badge/status-active-success.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-
-![Tech Stack](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
-
----
+AuthServe is a powerful and flexible Node.js API designed to handle user authentication and authorization. It provides a secure and scalable solution for managing user accounts, roles, and access controls in your applications.
 
 ## Features
 
-- **User Authentication**: Secure user registration and login with JWT (JSON Web Tokens).
-- **Password Encryption**: Passwords are saved using `bcrypt` hashing.
-- **Role-Based Access Control (RBAC)**: Differentiated access levels for `user` and `admin` roles.
-- **Protected Routes**: Middleware to protect routes that require authentication.
-- **Admin Privileges**: Special routes accessible only by admins (e.g., viewing all users).
-- **Scalable Structure**: Organized and modular folder structure for easy maintenance.
-- **Environment-Based Configuration**: Uses `.env` for easy configuration of secret keys and database URIs.
+-   **User Registration:** Secure user signup with hashed passwords.
+-   **User Login:** Authenticate users and generate JWT (JSON Web Tokens) for secure session management.
+-   **Role-Based Access Control (RBAC):** Define and manage user roles (e.g., `user`, `admin`).
+-   **Protected Routes:** Middleware to restrict access to certain routes based on authentication status and user roles.
+-   **User Management:** Admin functionalities for viewing and managing users.
+-   **Password Hashing:** Utilizes `bcrypt` for secure password storage.
+-   **JWT Implementation:** Securely issue and verify JSON Web Tokens.
 
----
+## Technologies Used
 
-## Tech Stack
+-   **Node.js:** JavaScript runtime environment.
+-   **Express.js:** Fast, unopinionated, minimalist web framework for Node.js.
+-   **MongoDB:** NoSQL database for storing user data.
+-   **Mongoose:** MongoDB object data modeling (ODM) for Node.js.
+-   **bcrypt.js:** Library for hashing passwords.
+-   **jsonwebtoken:** For implementing JSON Web Tokens.
+-   **dotenv:** To load environment variables from a `.env` file.
 
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (with Mongoose)
-- **Authentication**: JSON Web Tokens (JWT), bcrypt
-- **Validation**: Joi
-- **Development**: Nodemon
+## Setup Instructions
 
----
+Follow these steps to set up the project locally:
 
-## Folder Structure
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/aditya6100/AuthServe.git
+    cd AuthServe
+    ```
 
-```
-AuthServe/
-├── .env
-├── .env.example
-├── app.js
-├── package.json
-├── seed.js
-├── config/
-├── controllers/
-│   ├── authController.js
-│   └── userController.js
-├── middleware/
-│   ├── adminMiddleware.js
-│   └── authMiddleware.js
-├── models/
-│   └── User.js
-└── routes/
-    ├── authRoutes.js
-    └── userRoutes.js
-```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
----
+3.  **Create a `.env` file:**
+    Create a file named `.env` in the root directory and add the following environment variables:
 
-## Screenshots
+    ```
+    PORT=5000
+    MONGO_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret_key
+    JWT_LIFETIME=1h
+    ```
+    -   `PORT`: The port number the server will listen on.
+    -   `MONGO_URI`: Your MongoDB connection string (e.g., `mongodb://localhost:27017/authdb` or a MongoDB Atlas connection string).
+    -   `JWT_SECRET`: A strong, secret key for signing JWT tokens.
+    -   `JWT_LIFETIME`: The expiration time for JWT tokens (e.g., `1h`, `30d`).
 
-*(Add screenshots of your API being tested in Postman or a similar tool.)*
+4.  **Seed initial admin user (optional):**
+    You can run the `seed.js` script to create an initial admin user.
+    ```bash
+    node seed.js
+    ```
+    *Note: Modify `seed.js` to set the desired admin credentials before running.*
 
-| All Users (Admin) |  Register / Login |
-|---|---|
-| ![Screenshot 1](./screenshots/screen1.png) | ![Screenshot 2](./screenshots/screen2.png) |
+## Running the Application
 
----
-
-## Installation & Setup
-
-Follow these steps to get the project up and running on your local machine.
-
-**1. Clone the repository:**
-
-```bash
-git clone https://github.com/aditya6100/AuthServe.git
-cd AuthServe
-```
-
-**2. Install dependencies:**
-
-```bash
-npm install
-```
-
-**3. Set up environment variables:**
-
-Create a `.env` file in the root directory and add the following variables. You can use the `.env.example` as a template.
-
-```
-MONGO_URI=<YOUR_MONGODB_CONNECTION_STRING>
-JWT_SECRET=<YOUR_JWT_SECRET_KEY>
-```
-
-**4. Seed the database with an admin user (optional):**
-
-The `seed.js` script will create a default admin user. You can run it with:
-
-```bash
-npm run seed
-```
-
----
-
-## How to Run the Project
-
-To run the application in development mode (with auto-reloading):
-
-```bash
-npm run dev
-```
-
-To run the application in production:
+To start the development server:
 
 ```bash
 npm start
 ```
 
-The server will start on `http://localhost:5000` by default.
-
----
+The server will run on the port specified in your `.env` file (default: `5000`).
 
 ## API Endpoints
 
-The following table lists the available API endpoints.
+### Authentication
 
-| Method | Endpoint              | Description                                   | Access      |
-|--------|-----------------------|-----------------------------------------------|-------------|
-| `POST` | `/api/auth/register`  | Register a new user.                          | Public      |
-| `POST` | `/api/auth/login`     | Log in a user and receive a JWT.              | Public      |
-| `GET`  | `/api/users/me`       | Get the profile of the currently logged-in user.| Private     |
-| `GET`  | `/api/users/admin/users` | Get a list of all users.                 | Admin-Only  |
+-   `POST /api/auth/register`
+    -   **Description:** Register a new user.
+    -   **Body:** `{ "username": "testuser", "email": "test@example.com", "password": "password123" }`
+    -   **Response:** `{ "msg": "User registered successfully", "token": "..." }`
 
----
+-   `POST /api/auth/login`
+    -   **Description:** Log in an existing user.
+    -   **Body:** `{ "email": "test@example.com", "password": "password123" }`
+    -   **Response:** `{ "msg": "Logged in successfully", "token": "..." }`
 
-## Architecture Diagram
+### User Management
 
-This diagram shows the basic authentication flow.
+-   `GET /api/users`
+    -   **Description:** Get all users (Admin only).
+    -   **Headers:** `Authorization: Bearer <token>` (Admin token)
+    -   **Response:** `[ { "_id": "...", "username": "...", "email": "...", "role": "user" }, ... ]`
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    participant Database
+-   `GET /api/users/:id`
+    -   **Description:** Get a single user by ID (Admin only).
+    -   **Headers:** `Authorization: Bearer <token>` (Admin token)
+    -   **Response:** `{ "_id": "...", "username": "...", "email": "...", "role": "user" }`
 
-    Client->>Server: POST /api/auth/register (username, password)
-    Server->>Database: Hash password & save user
-    Database-->>Server: User created
-    Server-->>Client: { message: 'User registered' }
+-   `PUT /api/users/:id/role`
+    -   **Description:** Update a user's role (Admin only).
+    -   **Headers:** `Authorization: Bearer <token>` (Admin token)
+    -   **Body:** `{ "role": "admin" }`
+    -   **Response:** `{ "msg": "User role updated successfully" }`
 
-    Client->>Server: POST /api/auth/login (username, password)
-    Server->>Database: Find user by username
-    Database-->>Server: Return user data
-    Server->>Server: Compare hashed password
-    Server-->>Client: Return JWT Token
+-   `DELETE /api/users/:id`
+    -   **Description:** Delete a user (Admin only).
+    -   **Headers:** `Authorization: Bearer <token>` (Admin token)
+    -   **Response:** `{ "msg": "User deleted successfully" }`
 
-    Client->>Server: GET /api/users/me (Authorization: Bearer <token>)
-    Server->>Server: Verify JWT Token
-    Server->>Database: Get user profile
-    Database-->>Server: Return user data
-f   Server-->>Client: Return user profile
-```
+### Protected Route Example
 
----
-
-## Live Demo / Video
-
-- **Live Link**: [Link to your deployed application]
-- **Demo Video**: [Link to a walkthrough video]
-
----
-
-## Use Cases
-
-- **Foundation for a Web App**: Use this as the authentication backend for a full-stack MERN/MEVN application.
-- **Secure a Public API**: Protect your API endpoints by requiring a valid JWT.
-- **Learning RBAC**: Understand how to implement role-based access control in a Node.js environment.
-
----
-
-## Future Enhancements
-
-- [ ] Add password reset functionality (e.g., via email).
-- [ ] Implement OAuth 2.0 for social logins (Google, GitHub).
-- [ ] Add more robust user profile management (e.g., update profile, change password).
-- [ ] Implement refresh tokens for improved security.
-- [ ] Containerize the application with Docker.
-
----
-
-## Contributing
-
-Contributions are welcome! If you have any ideas, suggestions, or bug fixes, please open an issue or submit a pull request.
-
-1.  **Fork the Project**
-2.  **Create your Feature Branch** (`git checkout -b feature/AmazingFeature`)
-3.  **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
-4.  **Push to the Branch** (`git push origin feature/AmazingFeature`)
-5.  **Open a Pull Request**
-
----
+-   `GET /api/auth/profile`
+    -   **Description:** Get the profile of the authenticated user.
+    -   **Headers:** `Authorization: Bearer <token>` (Any valid user token)
+    -   **Response:** `{ "_id": "...", "username": "...", "email": "...", "role": "user" }`
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
