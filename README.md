@@ -112,6 +112,56 @@ The server will run on the port specified in your `.env` file (default: `5000`).
     -   **Headers:** `Authorization: Bearer <token>` (Any valid user token)
     -   **Response:** `{ "_id": "...", "username": "...", "email": "...", "role": "user" }`
 
+## Diagrams
+
+### System Architecture
+
+```mermaid
+graph LR
+    A[Client Application] -- HTTP Requests --> B(AuthServe API)
+    B --> C(MongoDB Database)
+    B -- Authenticates & Authorizes --> D(Middleware)
+    D -- Issues/Verifies JWT --> B
+```
+
+### Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Client
+    participant AuthServe API
+    participant MongoDB
+
+    User->>Client: Enters credentials (register/login)
+    Client->>AuthServe API: Sends authentication request (e.g., POST /api/auth/register)
+    AuthServe API->>MongoDB: Stores/Retrieves user data
+    alt Registration Success
+        MongoDB-->>AuthServe API: User data saved
+        AuthServe API->>AuthServe API: Hashes password, Generates JWT
+        AuthServe API-->>Client: Returns JWT
+        Client->>User: Authentication successful
+    else Login Success
+        MongoDB-->>AuthServe API: User data retrieved
+        AuthServe API->>AuthServe API: Verifies password, Generates JWT
+        AuthServe API-->>Client: Returns JWT
+        Client->>User: Authentication successful
+    else Failure
+        AuthServe API-->>Client: Returns error message
+        Client->>User: Authentication failed
+    end
+    User->>Client: Makes authenticated request
+    Client->>AuthServe API: Sends request with JWT in Authorization header
+    AuthServe API->>AuthServe API: Verifies JWT (authMiddleware)
+    alt JWT Valid & Authorized
+        AuthServe API-->>Client: Returns protected resource
+        Client->>User: Displays protected data
+    else JWT Invalid or Unauthorized
+        AuthServe API-->>Client: Returns 401/403 error
+        Client->>User: Access denied
+    end
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
